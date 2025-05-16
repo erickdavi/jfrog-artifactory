@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: artifactory
+    meta.helm.sh/release-namespace: artifactory
+  creationTimestamp: "2025-05-16T09:32:22Z"
+  labels:
+    app: artifactory
+    app.kubernetes.io/managed-by: Helm
+    chart: artifactory-107.111.7
+    component: nginx
+    heritage: Helm
+    release: artifactory
+  name: artifactory-artifactory-nginx
+  namespace: artifactory
+  resourceVersion: "88976"
+  uid: e7552666-acd6-4c2c-a1ae-7dcce5ef67a4
+spec:
+  allocateLoadBalancerNodePorts: true
+  clusterIP: 10.97.143.134
+  clusterIPs:
+  - 10.97.143.134
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http
+    nodePort: 32219
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  - name: https
+    nodePort: 32165
+    port: 443
+    protocol: TCP
+    targetPort: 8443
+  selector:
+    app: artifactory
+    component: nginx
+    release: artifactory
+  sessionAffinity: None
+  type: LoadBalancer
+status:
+  loadBalancer:
+    ingress:
+    - hostname: localhost

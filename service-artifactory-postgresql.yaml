@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: artifactory
+    meta.helm.sh/release-namespace: artifactory
+  creationTimestamp: "2025-05-16T09:32:22Z"
+  labels:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: artifactory
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 16.3.0
+    helm.sh/chart: postgresql-15.5.20
+  name: artifactory-postgresql
+  namespace: artifactory
+  resourceVersion: "88955"
+  uid: 0c012e1e-b525-4957-9c86-d559f05c9810
+spec:
+  clusterIP: 10.102.19.52
+  clusterIPs:
+  - 10.102.19.52
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: tcp-postgresql
+    port: 5432
+    protocol: TCP
+    targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/component: primary
+    app.kubernetes.io/instance: artifactory
+    app.kubernetes.io/name: postgresql
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

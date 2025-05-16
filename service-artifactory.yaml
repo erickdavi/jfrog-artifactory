@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: artifactory
+    meta.helm.sh/release-namespace: artifactory
+  creationTimestamp: "2025-05-16T09:32:22Z"
+  labels:
+    app: artifactory
+    app.kubernetes.io/managed-by: Helm
+    chart: artifactory-107.111.7
+    component: artifactory
+    heritage: Helm
+    release: artifactory
+  name: artifactory
+  namespace: artifactory
+  resourceVersion: "88967"
+  uid: fc7c00c8-7abd-41ec-9a5f-3fedefb405b8
+spec:
+  clusterIP: 10.100.248.143
+  clusterIPs:
+  - 10.100.248.143
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: http-router
+    port: 8082
+    protocol: TCP
+    targetPort: 8082
+  - name: http-artifactory
+    port: 8081
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: artifactory
+    component: artifactory
+    release: artifactory
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
