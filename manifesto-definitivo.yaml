@@ -1,10 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: art-novo
+spec: {}
+status: {}
+---
 ---
 # Source: artifactory-oss/charts/artifactory/charts/postgresql/templates/primary/networkpolicy.yaml
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -31,8 +40,9 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -52,6 +62,7 @@ spec:
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
+  namespace: art-novo
   name: artifactory-artifactory-nginx
   labels:
     app: artifactory
@@ -71,8 +82,9 @@ spec:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -85,8 +97,9 @@ automountServiceAccountToken: false
 apiVersion: v1
 kind: Secret
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -95,14 +108,15 @@ metadata:
     helm.sh/chart: postgresql-15.5.20
 type: Opaque
 data:
-  postgres-password: "VHM1M2N2cEw0Nw=="
-  password: "dmR4RGs4SXg2Yw=="
+  postgres-password: "OUFzZk9TYnZscA=="
+  password: "Y0tUMVdaQ1Fvaw=="
   # We don't auto-generate LDAP password when it's not provided as we do for other passwords
 ---
 # Source: artifactory-oss/charts/artifactory/templates/artifactory-unified-secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
+  namespace: art-novo
   name: artifactory-unified-secret
   labels:
     app: "artifactory"
@@ -197,6 +211,7 @@ apiVersion: v1
 kind: Secret
 type: kubernetes.io/tls
 metadata:
+  namespace: art-novo
   name: artifactory-nginx-certificate
   labels:
     app: artifactory
@@ -204,15 +219,16 @@ metadata:
     heritage: Helm
     release: artifactory
 data:
-  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURUakNDQWphZ0F3SUJBZ0lRSzh6cWJuMU9YdzcrZUZ1bWxpUW1LVEFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1aGNuUnBabUZqZEc5eWVTMWpZVEFlRncweU5UQTFNakV4T1RVeE5EaGFGdzB5TmpBMQpNakV4T1RVeE5EaGFNQll4RkRBU0JnTlZCQU1UQzJGeWRHbG1ZV04wYjNKNU1JSUJJakFOQmdrcWhraUc5dzBCCkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXhJV01yR1VOcExwcUpYN0hBZ3R2djBzeGdnRU03YVl0VHRYOXgyVmQKbHU4VC8rR3RlcVVTZlAyS0J1Uy80Qk1BbjdvdFh6UnNiRStTVXlsbXNMeHRaWUxkYTU1dWZ6MUZKNFdaallBUwpNMUdoaC94TlVqME9GS0xFdnU0MzNxcjdlakFDSGVET3oyRFpjdFFDdFNjaUg3MlhIZGd6TnE2MS9kRnVWREM2CmhaSlp5RDA0NTJ2Z2FGSnAza1Foc0poN2orK3pYRW5UTmJSTTQ1ejNhTTdpUGQzNGRETU5ZVXNOV0Y2aFRwS08KQ0piL2Fjb3I0Uzd2dE5HSEZ6Q2tNRnJuUUdLdzVIckZaR1hpTnlwTnI1c1IwM3pDWjl5UjVRTkFNZi9ObUczbwptTDBCR0treGYvaGtjU24rU0ZxMWJiT2dMd2tLaXFLZ0RqN3dnUzhFcldMVFpRSURBUUFCbzRHVU1JR1JNQTRHCkExVWREd0VCL3dRRUF3SUZvREFkQmdOVkhTVUVGakFVQmdnckJnRUZCUWNEQVFZSUt3WUJCUVVIQXdJd0RBWUQKVlIwVEFRSC9CQUl3QURBZkJnTlZIU01FR0RBV2dCVHN5TFpmNFZ3YXJmMWNHdmtIQjlJN3NpVGltVEF4QmdOVgpIUkVFS2pBb2doQmhjblJwWm1GamRHOXllUzV2YzNNMGdoUmhjblJwWm1GamRHOXllUzV2YzNNMExuTjJZekFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQVZEeVRVTHBTNmZFQ1FSS0hVWWF5OXQ0b01BQTJhNXB0WUw3bmliY0gKbVRVQi9FLzNHK2p6eC82eEdvUGpRZE8yVmZFRWIxZHhOWXc4azl6VmV1Q3dubWMxaXR1aEVvR0dQUFZndENtKwpNdDdYRVdvVkxsMjZhOVc2K0hlTzF4S0czTEhUVmFrWTFOV3dtaUNkZnd1VElNcUpVWmdFT2JmdXpqMng4S2RmCkpjb2tOMXVxZEw2eG50ME1qZDlQM2hCQk11N0lQNDlwZWRJVk9MZi80cVpLTSt5N2srSWVtYXNIdkRzT0gvQlQKekt2bWF4SWRkNWFjVExKbTdXZnFkRytsTFYvaUNQSkpqQU0xajIvTDFrQUdDRDI5M2V6OTkwZjF4MHVmNVBFVwpUTHM2THFxbGYwR2l0WVRGcHQzbDlFYmp0RnRJUXRqTVlNZHduSDl1czVUKzVnPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
-  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBeElXTXJHVU5wTHBxSlg3SEFndHZ2MHN4Z2dFTTdhWXRUdFg5eDJWZGx1OFQvK0d0CmVxVVNmUDJLQnVTLzRCTUFuN290WHpSc2JFK1NVeWxtc0x4dFpZTGRhNTV1ZnoxRko0V1pqWUFTTTFHaGgveE4KVWowT0ZLTEV2dTQzM3FyN2VqQUNIZURPejJEWmN0UUN0U2NpSDcyWEhkZ3pOcTYxL2RGdVZEQzZoWkpaeUQwNAo1MnZnYUZKcDNrUWhzSmg3aisrelhFblROYlJNNDV6M2FNN2lQZDM0ZERNTllVc05XRjZoVHBLT0NKYi9hY29yCjRTN3Z0TkdIRnpDa01Gcm5RR0t3NUhyRlpHWGlOeXBOcjVzUjAzekNaOXlSNVFOQU1mL05tRzNvbUwwQkdLa3gKZi9oa2NTbitTRnExYmJPZ0x3a0tpcUtnRGo3d2dTOEVyV0xUWlFJREFRQUJBb0lCQUFZT3A3dFlrZ2NWeDlmSQpCSkpIai9ZeGR5RXVyeHRVRitscUp4eFNQNFE3Y2o1YzBtQUpYbnlEeEJGYVU1K3dka0IyR0pmcW9iems1dm14Ck9QMFJrYjJqUHZmbU5qbXR4Y2ZtRWttT1BRRmY3cjZtUkN2WXZlcGM2ZnVJbENoRTFPTjdQMVYwYkd0djdNUGgKVFFRUVpMamR1eDZzWDBlOE10ZlQ4TGFmbWVBc0NMTzdETEEvdXZJWU8rWTVYRG5MQnBKWmNlNUxuQjkrUnQrZwpQUS9QdnBkc2JyRDR4cFh1ZiswSnZDTVBWcFd0RUVLZ0NjaU5YWXlCcERjTjhSY3RyalpRQnROakFlelZzN2tjCnZPKzFkMFlEK21keEZINnRFOXFNQmczWmhiUFlRQXVTV0V2RW5yS1BPZEtFRDU2ZHBxN28yb0wxNkx3ZzJtUk0KZlhTeTVERUNnWUVBeHpERWpCRnhXNWROdTMvWUdSanpnOXBIek1ZNC9zM2VQUXdVV3hhejd6RHdFYWFvVzdkKwpiQjhlWDQrd0I1SmtraUloLzc1ZFRnU0FJczFCdzVkclVxakU1UWFqUTBITEM5OWlwVFpmTW9NVGRxU0NuaEpoCkVqTlZvK0lZN0F4UFhSMCtOY2d2SU1ZT1h6QjhKV0I0R043OVpKNEdFdGxSV21oUkpKcFd2eU1DZ1lFQS9KSHQKTjFFY0ZBdnRIQSt3S0tMa1NhaDVPa005bzlxYTlUMktDMVVMYjl4alBkRW9aOUN5Q0xJeWE3aGNmTE9VaHFwNAplQm5OVDFRb3Z2RHlhRkFYOVdxNUJyNnZ6UzVQdmFkUFFZS1BwUlV4L01Gamw1ZWhXaVUwL0Z1bEkyaXlGeFAwCllOWVdBVjFOd2x1UE5meFh3SVpZaFlFV3dxN2xxYml4Q3dOSno5Y0NnWUVBckRVQ1I2SXc0YUZ1aDZLZ1hocFAKTlhmNlNSUTZaRGZ4WWMvV3JXVjBURjkvdlpMYXpPaFh1UHd5VXlXelp1aHVZRlI0RmxVcTcyOCtwRmZWK2xZbgphQUFXc1haS29iUDQ2aHZIZWRRRyszR00yeTZnNmk0emsvdWpsNXE2TnlEeFlDd1BBNG85REZXT1NVZHVuUlhJCjNwK3liRkdlS0orUEVOMU5BWnNaVWdjQ2dZQTZZTkJmdE5PMG5uMFR1MXlRUi9aVVFDaWxHdDJvZmVMTFJJb2YKekd4MFVwQnR2V2FGZUd0dUx5SVFXL0Nrc2kxbVl3aXRXZWxtcUtFeVlTYm1qWHk4TVFyTFVFLzZNUFlsZEFLUgp0Y2ZWOUd3MWE4M0ZRRHIvUnhKVU1pcWRZSm1wVStkc2FvOXppVWxyM3hYZStKQ2Y0MjJhamhmZ3IrUk5zbTdaCmlNMEt5UUtCZ0RwbklrSWdycVpJdzBYRVhwMngxS0tsSHFiVURUaXRzU0J3NmNSeXRBUFZWbGJndzQyakVaekIKbFJyTW14amZ5c1NlRG1lM2dOYUZKRW5pbjl4TWxFLzgzRVlEekV0OHB1ZElJRS9wRTJHbUJkQlVJZ2FWci94aQpuRDlVVjJjWGVhR2cyZ3J6NDl2SmNsT3VtUmV6T1drTkdKdEYwQ3NwWlF0V2hRcXRRV3lVCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURWekNDQWorZ0F3SUJBZ0lSQVAxV09NMWhIbS9zK1FSK0l0bFJic1F3RFFZSktvWklodmNOQVFFTEJRQXcKR1RFWE1CVUdBMVVFQXhNT1lYSjBhV1poWTNSdmNua3RZMkV3SGhjTk1qVXdOVEl4TWpNek5UTTNXaGNOTWpZdwpOVEl4TWpNek5UTTNXakFXTVJRd0VnWURWUVFERXd0aGNuUnBabUZqZEc5eWVUQ0NBU0l3RFFZSktvWklodmNOCkFRRUJCUUFEZ2dFUEFEQ0NBUW9DZ2dFQkFNTmszdDgySzE2WVFNV0NGT1JZdjAybCtPOER0amg0TXRDM1pJaUMKZ2Q2anpBNVpBdFRiSEF2YStPZUE2akZoSExPWTRUQlBrMFBaVnV3Wk42WCtWdVJub0E1eGhRdk5jZk5iRS83NQo4Z1Jzd0JCT2hDSVpweEdVZG42eGZpZzE0MzhzYlJ2b05Mb1dodGNRVG8rYy9BSytUTmRBY1lyUEI1SmFMVG5HCjN1aW43Mmd4Ynpjc1dzb1crSFZOMEN4UEQwNzNmOTk4Q2ZFRkRtVFRodWgvMmlOVTVWdmJZbXlPajZqNjVVSEkKOWtBQXVrNmx6bVdyZ3UzeEtnbHFPdEIydGlOQVNhN2lNWmZRYU1hZkhncDFRVkVoQnRiQmJlelBza29MZlIwNQordDBtd3BTcThWVjFNb2JFaEE0N0ZuKzlacVAxdFlQOEd5VzhRQ3l5V2VoU1BIRUNBd0VBQWFPQm5EQ0JtVEFPCkJnTlZIUThCQWY4RUJBTUNCYUF3SFFZRFZSMGxCQll3RkFZSUt3WUJCUVVIQXdFR0NDc0dBUVVGQndNQ01Bd0cKQTFVZEV3RUIvd1FDTUFBd0h3WURWUjBqQkJnd0ZvQVVhMFBnbW1aK2dva1ZnY05BS0lCUk56Lzhma2N3T1FZRApWUjBSQkRJd01JSVVZWEowYVdaaFkzUnZjbmt1WVhKMExXNXZkbStDR0dGeWRHbG1ZV04wYjNKNUxtRnlkQzF1CmIzWnZMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQWlXWjc1NXNZWGZOZmRWOVhBU2VnYUt0RTdjUksKVGk0MlN0SGNBNi9tU1Nua1pJdGxIQ202S21FT0RxMmo3SVVudzFVZDIvRU5yeUR3YTVWS2pOMnBiQ29zbjU4agpOalUxSzBpTFRwMUNsRzllKzdiVTBLamYwZXdYd1lTa3BmUFlhcGgzZmpJNk0zdnR1UGpvMnFMYnI0eVR1K3ZEClFaci9yWWJtNTlpT3F4K0ROZ2kxTXNEc1poaEk5b3BZRmdlOXBoS2h0TlJOT2dBT1RXOFRGOUl1bmo3U1g5VWMKYS9DWGhwWTZ2ZEgrYkhNcjhpbDIyazlYV3hzczh1cU5VS1hDbllwcU40cWZqVjhab1NoMlgrc2tVZnBNY3RoTAphWHFmZGRkNzU4SVRDb2V5VnJETDhFaWJhOHpMV2VpT0F2VXgwZHdCb25zU3RaMFVJQm41UytSc0RBPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb3dJQkFBS0NBUUVBdzJUZTN6WXJYcGhBeFlJVTVGaS9UYVg0N3dPMk9IZ3kwTGRraUlLQjNxUE1EbGtDCjFOc2NDOXI0NTREcU1XRWNzNWpoTUUrVFE5bFc3QmszcGY1VzVHZWdEbkdGQzgxeDgxc1Qvdm55Qkd6QUVFNkUKSWhtbkVaUjJmckYrS0RYamZ5eHRHK2cwdWhhRzF4Qk9qNXo4QXI1TTEwQnhpczhIa2xvdE9jYmU2S2Z2YURGdgpOeXhheWhiNGRVM1FMRThQVHZkLzMzd0o4UVVPWk5PRzZIL2FJMVRsVzl0aWJJNlBxUHJsUWNqMlFBQzZUcVhPClphdUM3ZkVxQ1dvNjBIYTJJMEJKcnVJeGw5Qm94cDhlQ25WQlVTRUcxc0Z0N00reVNndDlIVG42M1NiQ2xLcngKVlhVeWhzU0VEanNXZjcxbW8vVzFnL3diSmJ4QUxMSlo2Rkk4Y1FJREFRQUJBb0lCQUY2RjlhdFZzVFZad2p2Sgo2Z0Z0VFY1cTVEbjhPYktuc3kxMUNwVmZUU1EvYVArbjM4N0pFSkJMcGcyWU43TWJuNTdpWGszWXNRMHBudnNvClY5dGRadnVuaGE1M0REM2hiVGFrNE0rQWFxdnBVQ0NUV3lpRDhHWjR3N29XYzBsUWlIV0ZNR05IdWZvcjI1OCsKckVLZFZ1eWMwdDl1dFg3SkdJaWNSelNrR0VIRDR0L0xzSS9COGdPbndPdG8yT2NrVU94TmV5UUpZNjE2Y0xucwpBYUI1MGZmbEZzZzg2RFZ5SUVjMTdnMWRoNldxUlM1YVgxTlJtbDM0WjBYOW4wdjlNT0Y3TEFXRW8ybHprOElWCm9ncWY2WFVtZmNmbk1NT3htd1hYaXVod09GSUJLNXV1Y1dXOGpJRCsvSVNheWVhcnBjUlFBUDgwc1dFYngrVGkKSzV2UkRnRUNnWUVBem5jU3ViS0QvbWJ4YjlEQnRTWE5XZGtGbVd1RlJRTmVXS2pwSXhCOGR4QmhqN1RrUkYydApQWTYwalduR0FwKzZwZytZMXJmeVlwc2FiVHhMMkpzdFZpRG80OTZEQmpzbnRVN0JnaHdWOVdBVGJLZjJwaFZUCnNNZStPdDRiQ2hjUXlkVnllemppYkJkMmVpQTQ0aVlSNENUd0ZacTZRM3hCeGpSbWN0NmtVUWtDZ1lFQThrWFIKcEMyZjRtSEdtbUdzc1VlRHBXOS9nS0tSR0ZVM1c3Ym5RcnZTSk5wT1hQa3JETnN1NjdSclFCd2lEQlV1QnB4MgpXRVZDN25VdXJVK1E3OXVHUUUxdmcwUE5YWUZMUUQ3QURnSWZrZzI4SHdJZGRjZVRBMUo2bWFXdExadFBhd3VmCmRCTkpzbjUxQXR3T1hHT1N2NnBTQUNyNHRwc1ltbVI3RGdHaHNpa0NnWUI3Y01lNlROZ0w3MkprbHV4cHNNdEEKNzdjZ1RoK2s3bW1uR240aEg4YzZySW1ZRU8vMVRBaTY2Q3BjN2lPY0NBSGhMU3dWSEcrSHN2SXU0MEQ1cFhXSwpyQ3h4cU9TdmdnaXdwd0NkR011c0pDQVk4NmRORHkwMVlZY0R6UzFmY0FEeW0zSlI1K1cvK0pzMlV6T1BTbkdmCmtKWVdaS2IrbURqL0Z1ODF1SldIZVFLQmdRQ08zU2tRZlc4STJjdDVnaHVKdHJna3VDa2h1N3QvODlCZkh1NGsKWmdrM2Zod3pxeUw5dzhwWlo5ek93MGc0Zzh6T1RUbGtPQU9PQmovdUp6czZsZU1HekNMejd1bU5PQThkNVdMdgpYOFVxSlR0SHRjR1ZrSWhhcnlwb3JGQUEwdEwwTnJoaWhIVXk4bXNoc280dFlQSktYNjlYTmYvUC9vbDFrY2NXCnJWT2ljUUtCZ0dleXN0d3NGRXR0WEVJRTlTejM1Mk1lcGFoTk5XdHdZYVpnUXVCVHFLckFKZTQ3RlVtR21Ea0YKUU5QUFYxYWZuSXJzOVBkVm9mWG9EQmw0WGZVUEJnWGVXbEM3cm1JWlRZaDlUR1hIdUs4WTBRMTFpb2p2eitSZAozREZ0NkpDTFFVcUtacFJmSTd3YjNhMVZTWlBqK2xYaDhOTHp1cC9lUVdlcTAvY3NzbnVsCi0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
 ---
 # Source: artifactory-oss/charts/artifactory/charts/postgresql/templates/primary/extended-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql-extended-configuration
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -229,6 +245,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  namespace: art-novo
   name: artifactory-configmaps
   labels:
     app: artifactory
@@ -245,6 +262,7 @@ data:
 kind: ConfigMap
 apiVersion: v1
 metadata:
+  namespace: art-novo
   name: artifactory-installer-info
   labels:
     app: artifactory
@@ -259,6 +277,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  namespace: art-novo
   name: artifactory-nginx-artifactory-conf
   labels:
     app: artifactory
@@ -346,6 +365,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  namespace: art-novo
   name: artifactory-nginx-conf
   labels:
     app: artifactory
@@ -418,6 +438,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  namespace: art-novo
   name: artifactory-nginx-scripts
   labels:
     app: artifactory
@@ -471,8 +492,9 @@ data:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql-hl
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -501,8 +523,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -527,6 +550,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: art-novo
   name: artifactory
   labels:
     app: artifactory
@@ -554,6 +578,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: art-novo
   name: artifactory-artifactory-nginx
   labels:
     app: artifactory
@@ -585,6 +610,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  namespace: art-novo
   name: artifactory-artifactory-nginx
   labels:
     app: artifactory
@@ -732,8 +758,9 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  namespace: art-novo
   name: artifactory-postgresql
-  namespace: "oss4"
+  namespace: "art-novo"
   labels:
     app.kubernetes.io/instance: artifactory
     app.kubernetes.io/managed-by: Helm
@@ -929,6 +956,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  namespace: art-novo
   name: artifactory
   labels:
     app: artifactory
