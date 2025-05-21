@@ -1,0 +1,76 @@
+#!/bin/bash
+
+set -e
+
+# Pergunta o namespace
+read -p "Digite o nome do namespace para o Artifactory OSS: " NAMESPACE
+
+# Lista as últimas versões disponíveis
+echo "[+] Listando versões disponíveis do chart jfrog/artifactory-oss:"
+helm search repo jfrog/artifactory-oss --versions | head -n 15
+
+# Pergunta a versão
+read -p "Digite a versão do Artifactory OSS (ex: 107.41.6, deixe vazio para usar a última): " VERSION
+
+clear
+
+echo "[+] Adicionando repositório Helm da JFrog (caso não exista)"
+helm repo add jfrog https://charts.jfrog.io || true
+helm repo update
+
+echo "[+] Criando diretório de manifests"
+mkdir -p manifests
+
+echo "[+] Gerando arquivo values.yaml"
+cat <<EOF > values.yaml
+nginx:
+  enabled: true
+  service:
+    type: NodePort
+
+postgresql:
+  enabled: true
+  auth:
+    username: artifactory
+    password: $(openssl rand -base64 16)
+    database: artifactory
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+      # storageClass: "gp2"
+
+artifactory:
+  persistence:
+    size: 10Gi
+    # storageClass: "gp2"
+EOF
+
+echo "[+] Gerando arquivo manifests/artifactory.yaml com o namespace incluso"
+# Escreve o manifesto do namespace
+kubectl create namespace "$NAMESPACE" --dry-run=client -o yaml > manifests/artifactory.yaml
+echo "---" >> manifests/artifactory.yaml
+
+# Gera os recursos com helm template
+if [[ -z "$VERSION" ]]; then
+  helm template artifactory jfrog/artifactory-oss \
+    --namespace "$NAMESPACE" \
+    -f values.yaml \
+    --include-crds \
+    | sed "/^metadata:/,/^[^ ]/s/^  name:/  namespace: $NAMESPACE\n  name:/" \
+    >> manifests/artifactory.yaml
+else
+  helm template artifactory jfrog/artifactory-oss \
+    --namespace "$NAMESPACE" \
+    -f values.yaml \
+    --version "$VERSION" \
+    --include-crds \
+    | sed "/^metadata:/,/^[^ ]/s/^  name:/  namespace: $NAMESPACE\n  name:/" \
+    >> manifests/artifactory.yaml
+fi
+
+echo "[+] Aplicando os manifestos no namespace: $NAMESPACE"
+kubectl apply -f manifests/artifactory.yaml
+
+echo "[✅] Implantação concluída com sucesso!"
+echo "[ℹ️] Para verificar os recursos: kubectl get all -n $NAMESPACE"
