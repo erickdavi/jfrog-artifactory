@@ -1,0 +1,823 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: artifactory-novo-6x
+spec: {}
+status: {}
+---
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-networkpolicy.yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-artifactory-networkpolicy
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    release: artifactory
+    heritage: Helm  
+spec:
+  podSelector:
+    matchLabels:
+      app: artifactory
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - {}
+  egress:
+  - {}
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-serviceaccount.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    component: artifactory
+    heritage: Helm
+    release: artifactory
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory
+---
+# Source: artifactory-oss/charts/artifactory/charts/postgresql/templates/secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-postgresql
+  labels:
+    app: postgresql
+    chart: postgresql-7.0.1
+    release: "artifactory"
+    heritage: "Helm"
+type: Opaque
+data:
+  postgresql-password: "UXNXRVlNRnk2Sw=="
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-binarystore-secret.yaml
+kind: Secret
+apiVersion: v1
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-binarystore
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    heritage: Helm
+    release: artifactory
+stringData:
+  binarystore.xml: |-
+    <!-- File system filestore -->
+    <config version="v1">
+        <chain>
+                <provider id="file-system" type="file-system"/>
+        </chain>
+    </config>
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-secrets.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    heritage: Helm
+    release: artifactory
+type: Opaque
+data:
+---
+# Source: artifactory-oss/charts/artifactory/templates/nginx-certificate-secret.yaml
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-nginx-certificate
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    heritage: Helm
+    release: artifactory
+data:
+  tls.crt: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURiRENDQWxTZ0F3SUJBZ0lRT3lzeERCWmE5bHVQa0dJdkxhVUJtREFOQmdrcWhraUc5dzBCQVFzRkFEQVoKTVJjd0ZRWURWUVFERXc1aGNuUnBabUZqZEc5eWVTMWpZVEFlRncweU5UQTFNekF4TnpBMU5UZGFGdzB5TmpBMQpNekF4TnpBMU5UZGFNQll4RkRBU0JnTlZCQU1UQzJGeWRHbG1ZV04wYjNKNU1JSUJJakFOQmdrcWhraUc5dzBCCkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXd4ZlVtSE5GZHRsZkU4SW03U2wvLzRWWW0weWYrYThSQjZZeWxzbmIKYkxuRDA3S2VBV1IyN1A0SkFUeDAyNlhiU0NScDczOUtCK1FlR1lIT0VORkVqLytoKzRXUm52UlkwRFd4QlI4RAovMndseDR0K1lTbityMjFJRVdjeFpEY3lITTUwL3F3cGJDWkxoMWNJNlNCSE1GNUNZYldicy9XUmgxZDV2M0tKCmZWdXB6c1JVK1Jmd1hmMWpLSllFa0FSVzRNN251clFhNyt5ekszUmIzcjVGQThmbEZ3QmJrNENMaThybEdOSCsKNXAxQmJEYWJTL1IycFhmQXg3N3I2cVpha2FMbHdMd2pXY2VrbVBYbDVJVTFOSG9WbDVYY3NTbzFScU5MdGVXNApjd0J3YnU2emVBVTBuaGRNanpnQjYyZUt6RlRvelZNRWYrbDVuMjhkZTdyc3RRSURBUUFCbzRHeU1JR3ZNQTRHCkExVWREd0VCL3dRRUF3SUZvREFkQmdOVkhTVUVGakFVQmdnckJnRUZCUWNEQVFZSUt3WUJCUVVIQXdJd0RBWUQKVlIwVEFRSC9CQUl3QURBZkJnTlZIU01FR0RBV2dCUnhtTEJPNEJlUGZQRmhLQ01QN1BMNUEzU0xmakJQQmdOVgpIUkVFU0RCR2doOWhjblJwWm1GamRHOXllUzVoY25ScFptRmpkRzl5ZVMxdWIzWnZMVFo0Z2lOaGNuUnBabUZqCmRHOXllUzVoY25ScFptRmpkRzl5ZVMxdWIzWnZMVFo0TG5OMll6QU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUEKa2hDYXQzemxxa1Jrbit3MjRWV0ZJc1RkSjdkZkl0QmFPK3Brd2YxQ3VlNDZmWW9kaWJCWHU4UEhDMW9sMldzRApWY0tac2ZSakRRVjJMcVpYNm5SRW1pN0MwNVBNL3JUZDRLMWtlQlduc1dEWGVlb0xsLzEvc3UwZ0J6Qlh0S21FClluV1NoQ0QrOHJvalptcGJiZm91bjk4RDY1ai9hbEV6Rit1Q3QyZW9QazdUa0IrbitNMFdEK0hwZ3Mvb2xiSkkKdm1WWDhOYkVkSTFKNDJJcjU0WS9tM1VJaGFaKzZpc1lMWVFtdElBUWxrbjZVOHhvR3JBMFVucVNhZGUyRThiVgpFamlSSWNwVDVTd0NiaHZ5cEtjZVd2MCsza2NzMFVDa0dOQ0d6NFJKZ3FKcUR0dXVvVEJPdVhidFlRbWsvZzcrCldWbEY1NkQ0bWo1UVhCN0ZJQm5JNHc9PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+  tls.key: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFb2dJQkFBS0NBUUVBd3hmVW1ITkZkdGxmRThJbTdTbC8vNFZZbTB5ZithOFJCNll5bHNuYmJMbkQwN0tlCkFXUjI3UDRKQVR4MDI2WGJTQ1JwNzM5S0IrUWVHWUhPRU5GRWovK2grNFdSbnZSWTBEV3hCUjhELzJ3bHg0dCsKWVNuK3IyMUlFV2N4WkRjeUhNNTAvcXdwYkNaTGgxY0k2U0JITUY1Q1liV2JzL1dSaDFkNXYzS0pmVnVwenNSVQorUmZ3WGYxaktKWUVrQVJXNE03bnVyUWE3K3l6SzNSYjNyNUZBOGZsRndCYms0Q0xpOHJsR05IKzVwMUJiRGFiClMvUjJwWGZBeDc3cjZxWmFrYUxsd0x3aldjZWttUFhsNUlVMU5Ib1ZsNVhjc1NvMVJxTkx0ZVc0Y3dCd2J1NnoKZUFVMG5oZE1qemdCNjJlS3pGVG96Vk1FZitsNW4yOGRlN3JzdFFJREFRQUJBb0lCQURtaWM2THFBdTUrZnhFVwpQV3U0NCtCMzQxcFZ3N2orbUJoYloveVYrNlhlSjFVR0lwbWt0V0dFRnVMdm1sSTlhRStpdWswUG5LNUNIUVpLCkM3ZDZLemdqUEJaVE9sYnNOc1NqNS96c1VjRUdrUTZuVGhta1QySkI5WlYybCtmVVNwQ3FDWFFuSmtHVitxQXIKL1N6cDVUNEx5cTZVK1QrcjMyZE5WMkZRay8rZExieUlLWlFaUFdKRXM1Z1JEV01pOGtSYkRoNUY2YktGdGhoNQpaRGRudGF5Z1VxK1hhZmRta3l4b2dKdjBjbEVqdXFiM0pScVJ0ZlViV3RKRlZCTWx0Q1FhMmJZVEZpL3F5YWhtCk02WS9oZG9CTDFNUDllOTNGdFYvNmU3VWkzV0VackNYUHlJVlJCUUdjZGFabisrMEFTODlObGhqL2RrV3RwVGYKcTcrZUF3RUNnWUVBNEkyT0RVbUE5T0crY3I3azlnREN6dFVNRGhMVk0zVlEzdGRwa2hoVXA5NDFleXpkOWFncApWZnF3M1BUdjZuK2ozNEpMWnd0UXV0MG5uKzExaDREWVkyRVBaTE9hU2pHZWtZdGU5UnkxSE1qOWF6YXpFVkd3CitrZU9XRkhNSkVjL0tUaHNPMVRHYkJkRHpMZzdrWHArWCtnRXo0UWNJWTBjU1Bsb0daeC9nZlVDZ1lFQTNtb2MKUlI0R3NVbVRobVgwVUVKdDJRZU5XSXdkeW1XaDZySy9oN0VnR0krTXlrRXB5NW82R1ZtdGJCdnZpVnhBQ0diWQo0OTBkMldQVTE5UjY1SDR5VHBlODUvTVBhYWJmSUhpdUhtNkU4MnFkSXJNV0R0UUsyOUE1aTNkRUkxZkdQMERNCkxNZE40WmUwVHpUOTNETWk0cE16ZWtjcEZFRUJRN0hBbkV2elI4RUNnWUJqYmVxWGNaT2JXeFgwUXhpbzRSOWgKYkM2aFVLOTgwSmFWaGJhbVRRVzNLd3B0VnltVksvZlpyVjZCQ0Nmdm9zTVNKZVJ6WlN4REFjZ1k1WkZrQmFaTApJdUFwQytubXJsL3pQRTQ0cEpTQmdYSE05blNGMTdGUXNUeVRXT3pXcDRHTkpBR3dwOUlRYktERjFsSHlFZFpCCmEwQXVEdVpSNk9TOFgwczhBL0xsdlFLQmdHTm4wNGpFdWNNRkdtMW9KZ0MxSC9sdkdhcG92V3ZYYnIzQjlENkcKV00wQlk3Q0YzVk5GZEJBZWQ1Y3BDUzlBVHRJeWZWK2lWUlB6UFk3VlJiUFgvMDRISFlRaHExTFNKVW1UQm1kTgppQmh2SHhvQ0pxcXI5TXAzenpCWk50Z0JBL2NEVS8zemVnaUkwQ3JTaVYrZ2IwZ0srR2YvWkFuTVgrOU1nOFNYCllYMUJBb0dBQm9ZQmlMLzlkUWdvU3RwN0VxMEkzN3dUcWU2RVU3VXVaT0wrODFMRS94eVEyZUpWRlNOT3B5THgKRmk1OUEvVFlNY21KbWhyUWlQdFNQTjdKazhJdERrWFM4NjBOdEF3allQWDdDWmNXanR0WTAyT21sYkpkSW8rMgpGOVY3OEFhbW15bmxCdDNPOGJhQkZRVmtWZ3dRT3pybWUrdWZFS0swdWFQR3VxWUVkQW89Ci0tLS0tRU5EIFJTQSBQUklWQVRFIEtFWS0tLS0tCg==
+---
+# Source: artifactory-oss/charts/artifactory/charts/postgresql/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-postgresql-configuration
+  labels:
+    app: postgresql
+    chart: postgresql-7.0.1
+    release: "artifactory"
+    heritage: "Helm"
+data:
+  postgresql.conf: |
+    listen_addresses='*'
+    max_connections=1500
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-installer-info.yaml
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-installer-info
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    heritage: Helm
+    release: artifactory
+data:
+  installer-info.json: |
+    {
+      "productId": "Helm_artifactory/8.11.9",
+      "features": [
+      {
+        "featureId": "ArtifactoryVersion/6.23.36"
+      },
+      {
+        "featureId": "postgresql/0.0.0"
+      },
+      {
+        "featureId": "Platform/art-oss-helm"
+      }
+      ]
+    }
+---
+# Source: artifactory-oss/charts/artifactory/templates/nginx-artifactory-conf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-nginx-artifactory-conf
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    heritage: Helm
+    release: artifactory
+data:
+  artifactory.conf: |
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3;
+    ssl_certificate  /var/opt/jfrog/nginx/ssl/tls.crt;
+    ssl_certificate_key  /var/opt/jfrog/nginx/ssl/tls.key;
+    ssl_session_cache shared:SSL:1m;
+    ssl_prefer_server_ciphers   on;
+    ## server configuration
+    server {
+      listen 443 ssl;
+      listen 80;
+      server_name ~(?<repo>.+)\.artifactory-artifactory artifactory-artifactory;
+    
+      if ($http_x_forwarded_proto = '') {
+        set $http_x_forwarded_proto  $scheme;
+      }
+      ## Application specific logs
+      ## access_log /var/log/nginx/artifactory-access.log timing;
+      ## error_log /var/log/nginx/artifactory-error.log;
+      rewrite ^/$ /artifactory/webapp/ redirect;
+      rewrite ^/artifactory/?(/webapp)?$ /artifactory/webapp/ redirect;
+      if ( $repo != "" ) {
+        rewrite ^/(v1|v2)/(.*) /artifactory/api/docker/$repo/$1/$2 break;
+      }
+      rewrite ^/(v1|v2)/([^/]+)/(.*)$ /artifactory/api/docker/$2/$1/$3;
+      rewrite ^/(v1|v2)/ /artifactory/api/docker/$1/;
+      chunked_transfer_encoding on;
+      client_max_body_size 0;
+      location /artifactory/ {
+        proxy_read_timeout  900;
+        proxy_pass_header   Server;
+        proxy_cookie_path   ~*^/.* /;
+        if ( $request_uri ~ ^/artifactory/(.*)$ ) {
+          proxy_pass       http://artifactory-artifactory:8081/artifactory/$1;
+        }
+        proxy_pass          http://artifactory-artifactory:8081/artifactory/;
+        proxy_set_header    X-Artifactory-Override-Base-Url $http_x_forwarded_proto://$host:$server_port/artifactory;
+        proxy_set_header    X-Forwarded-Port  $server_port;
+        proxy_set_header    X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_set_header    Host              $http_host;
+        proxy_set_header    X-Forwarded-For   $proxy_add_x_forwarded_for;
+      }
+    }
+---
+# Source: artifactory-oss/charts/artifactory/templates/nginx-conf.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-nginx-conf
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    heritage: Helm
+    release: artifactory
+data:
+  nginx.conf: |
+    # Main Nginx configuration file
+    worker_processes  4;
+    
+    error_log  /var/opt/jfrog/nginx/logs/error.log warn;
+    pid        /tmp/nginx.pid;
+    
+    events {
+      worker_connections  1024;
+    }
+    
+    
+    http {
+      include       /etc/nginx/mime.types;
+      default_type  application/octet-stream;
+    
+      variables_hash_max_size 1024;
+      variables_hash_bucket_size 64;
+      server_names_hash_max_size 4096;
+      server_names_hash_bucket_size 128;
+      types_hash_max_size 2048;
+      types_hash_bucket_size 64;
+      proxy_read_timeout 2400s;
+      client_header_timeout 2400s;
+      client_body_timeout 2400s;
+      proxy_connect_timeout 75s;
+      proxy_send_timeout 2400s;
+      proxy_buffer_size 32k;
+      proxy_buffers 40 32k;
+      proxy_busy_buffers_size 64k;
+      proxy_temp_file_write_size 250m;
+      proxy_http_version 1.1;
+      client_body_buffer_size 128k;
+    
+      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+      '$status $body_bytes_sent "$http_referer" '
+      '"$http_user_agent" "$http_x_forwarded_for"';
+    
+      log_format timing 'ip = $remote_addr '
+      'user = \"$remote_user\" '
+      'local_time = \"$time_local\" '
+      'host = $host '
+      'request = \"$request\" '
+      'status = $status '
+      'bytes = $body_bytes_sent '
+      'upstream = \"$upstream_addr\" '
+      'upstream_time = $upstream_response_time '
+      'request_time = $request_time '
+      'referer = \"$http_referer\" '
+      'UA = \"$http_user_agent\"';
+    
+      access_log  /var/opt/jfrog/nginx/logs/access.log  timing;
+    
+      sendfile        on;
+      #tcp_nopush     on;
+    
+      keepalive_timeout  65;
+    
+      #gzip  on;
+    
+      include /etc/nginx/conf.d/*.conf;
+    
+    }
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    component: artifactory
+    heritage: Helm
+    release: artifactory
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - watch
+  - list
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    component: artifactory
+    heritage: Helm
+    release: artifactory
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory
+subjects:
+- kind: ServiceAccount
+  name: artifactory-artifactory
+roleRef:
+  kind: Role
+  apiGroup: rbac.authorization.k8s.io
+  name: artifactory-artifactory
+---
+# Source: artifactory-oss/charts/artifactory/charts/postgresql/templates/svc-headless.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-postgresql-headless
+  labels:
+    app: postgresql
+    chart: postgresql-7.0.1
+    release: "artifactory"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+  selector:
+    app: postgresql
+    release: "artifactory"
+---
+# Source: artifactory-oss/charts/artifactory/charts/postgresql/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-postgresql
+  labels:
+    app: postgresql
+    chart: postgresql-7.0.1
+    release: "artifactory"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  ports:
+    - name: postgresql
+      port: 5432
+      targetPort: postgresql
+  selector:
+    app: postgresql
+    release: "artifactory"
+    role: master
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    component: artifactory
+    heritage: Helm
+    release: artifactory
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8081
+    targetPort: 8081
+    protocol: TCP
+    name: http
+  selector:
+    app: artifactory
+    component: "artifactory"
+    release: artifactory
+---
+# Source: artifactory-oss/charts/artifactory/templates/nginx-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-nginx
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    component: nginx
+    heritage: Helm
+    release: artifactory
+spec:
+  type: LoadBalancer
+  
+  externalTrafficPolicy: Cluster
+  ports:
+  # DEPRECATION NOTE: The following is to maintain support for values pre 1.3.0 and
+  # will be cleaned up in a later verion
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  - port: 443
+    targetPort: 443
+    protocol: TCP
+    name: https
+  selector:
+    app: artifactory
+    component: nginx
+    release: artifactory
+---
+# Source: artifactory-oss/charts/artifactory/templates/nginx-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory-nginx
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    heritage: Helm
+    release: artifactory
+    component: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: artifactory
+      release: artifactory
+      component: nginx
+  template:
+    metadata:
+      annotations:
+        checksum/nginx-conf: 5256e97c54a156a64d531b247a0ac6177b0edeee35df59ec38fe9bdb85140b5c
+        checksum/nginx-artifactory-conf: 7cdcb4b38b04e42a91d98221f197a75cc374fa8b6bc1ebf87a78866b8addcfda
+        checksum/replicator-conf: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+      labels:
+        app: artifactory
+        chart: artifactory-8.11.9
+        component: nginx
+        heritage: Helm
+        release: artifactory
+    spec:
+      serviceAccountName: artifactory-artifactory
+      initContainers:
+      - name: "setup"
+        image: "releases-docker.jfrog.io/alpine:3.13.5"
+        imagePullPolicy: IfNotPresent
+        command:
+        - '/bin/sh'
+        - '-c'
+        - >
+          rm -rfv /var/opt/jfrog/nginx/lost+found;
+          mkdir -p /var/opt/jfrog/nginx/logs;
+        volumeMounts:
+        - mountPath: "/var/opt/jfrog/nginx"
+          name: nginx-volume
+      securityContext:
+        runAsUser: 104
+        fsGroup: 107
+      containers:
+      - name: nginx
+        image: 'releases-docker.jfrog.io/jfrog/nginx-artifactory-pro:6.23.36'
+        imagePullPolicy: IfNotPresent
+        command:
+          - 'nginx'
+          - '-g'
+          - 'daemon off;'
+        ports:
+        # DEPRECATION NOTE: The following is to maintain support for values pre 1.3.1 and
+        # will be cleaned up in a later version
+        - containerPort: 80
+        - containerPort: 443
+        volumeMounts:
+        - name: nginx-conf
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: nginx-artifactory-conf
+          mountPath: "/var/opt/jfrog/nginx/conf.d/"
+        - name: nginx-volume
+          mountPath: "/var/opt/jfrog/nginx"
+        - name: ssl-certificates
+          mountPath: "/var/opt/jfrog/nginx/ssl"
+        resources:
+          {}
+        readinessProbe:
+          httpGet:
+            path: /artifactory/webapp/#/login
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 10
+          successThreshold: 1
+        livenessProbe:
+          httpGet:
+            path: /artifactory/webapp/#/login
+            port: 80
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 10
+          successThreshold: 1
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: artifactory-artifactory-nginx-conf
+      - name: nginx-artifactory-conf
+        configMap:
+          name: artifactory-artifactory-nginx-artifactory-conf
+      - name: nginx-volume
+        emptyDir: {}
+      - name: ssl-certificates
+        secret:
+          secretName: artifactory-artifactory-nginx-certificate
+---
+# Source: artifactory-oss/charts/artifactory/charts/postgresql/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-postgresql
+  labels:
+    app: postgresql
+    chart: postgresql-7.0.1
+    release: "artifactory"
+    heritage: "Helm"
+spec:
+  serviceName: artifactory-postgresql-headless
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: postgresql
+      release: "artifactory"
+      role: master
+  template:
+    metadata:
+      name: artifactory-postgresql
+      labels:
+        app: postgresql
+        chart: postgresql-7.0.1
+        release: "artifactory"
+        heritage: "Helm"
+        role: master
+    spec:      
+      securityContext:
+        fsGroup: 1001
+      initContainers:
+        - name: init-chmod-data
+          image: docker.io/bitnami/minideb:stretch
+          imagePullPolicy: "Always"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          command:
+            - /bin/sh
+            - -c
+            - |
+              mkdir -p /bitnami/postgresql/data
+              chmod 700 /bitnami/postgresql/data
+              find /bitnami/postgresql -mindepth 0 -maxdepth 1 -not -name ".snapshot" -not -name "lost+found" | \
+                xargs chown -R 1001:1001
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/postgresql
+              subPath: 
+      containers:
+        - name: artifactory-postgresql
+          image: releases-docker.jfrog.io/bitnami/postgresql:9.6.18-debian-10-r7
+          imagePullPolicy: "IfNotPresent"
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          securityContext:
+            runAsUser: 1001
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: POSTGRESQL_PORT_NUMBER
+              value: "5432"
+            - name: POSTGRESQL_VOLUME_DIR
+              value: "/bitnami/postgresql"
+            - name: PGDATA
+              value: "/bitnami/postgresql/data"
+            - name: POSTGRES_USER
+              value: "artifactory"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: artifactory-postgresql
+                  key: postgresql-password
+            - name: POSTGRES_DB
+              value: "artifactory"
+          ports:
+            - name: postgresql
+              containerPort: 5432
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U "artifactory" -d "artifactory" -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - -e
+                - |
+                  pg_isready -U "artifactory" -d "artifactory" -h 127.0.0.1 -p 5432
+                  [ -f /opt/bitnami/postgresql/tmp/.initialized ]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          volumeMounts:
+            - name: data
+              mountPath: /bitnami/postgresql
+              subPath: 
+            - name: postgresql-config
+              mountPath: /bitnami/postgresql/conf
+      volumes:
+        - name: postgresql-config
+          configMap:
+            name: artifactory-postgresql-configuration
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "50Gi"
+---
+# Source: artifactory-oss/charts/artifactory/templates/artifactory-statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  namespace: artifactory-novo-6x
+  name: artifactory-artifactory
+  labels:
+    app: artifactory
+    chart: artifactory-8.11.9
+    component: artifactory
+    heritage: Helm
+    release: artifactory
+spec:
+  serviceName: artifactory
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: artifactory
+      role: artifactory
+      release: artifactory
+  template:
+    metadata:
+      labels:
+        app: artifactory
+        chart: artifactory-8.11.9
+        heritage: Helm
+        role: artifactory
+        component: artifactory
+        release: artifactory
+      annotations:
+        checksum/binarystore: 3f37164fe7d8fa13505965818c89bb2b86c64dc7dd078b40ad7f4f33e4f9f190
+        checksum/access-creds: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+    spec:
+      serviceAccountName: artifactory-artifactory
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsUser: 1030
+        fsGroup: 1030
+      initContainers:
+      - name: "delete-db-properties"
+        image: "releases-docker.jfrog.io/alpine:3.13.5"
+        imagePullPolicy: IfNotPresent
+        command:
+          - 'sh'
+          - '-c'
+          - 'rm -fv /var/opt/jfrog/artifactory/etc/db.properties'
+        volumeMounts:
+          - name: artifactory-volume
+            mountPath: "/var/opt/jfrog/artifactory"
+      - name: "remove-lost-found"
+        image: "releases-docker.jfrog.io/alpine:3.13.5"
+        imagePullPolicy: IfNotPresent
+        command:
+        - 'sh'
+        - '-c'
+        - 'rm -rfv /var/opt/jfrog/artifactory/lost+found /var/opt/jfrog/artifactory/data/.lock'
+        volumeMounts:
+        - name: artifactory-volume
+          mountPath: "/var/opt/jfrog/artifactory"
+      - name: "wait-for-db"
+        image: "releases-docker.jfrog.io/alpine:3.13.5"
+        command:
+        - 'sh'
+        - '-c'
+        - >
+          until nc -z -w 2 artifactory-postgresql 5432 && echo database ok; do
+            sleep 2;
+          done;
+      containers:
+      - name: artifactory
+        image: 'releases-docker.jfrog.io/jfrog/artifactory-oss:6.23.36'
+        imagePullPolicy: IfNotPresent
+        securityContext:
+          allowPrivilegeEscalation: false
+        command:
+        - '/bin/sh'
+        - '-c'
+        - >
+          set -e;
+          /entrypoint-artifactory.sh
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - '/bin/sh'
+              - '-c'
+              - >
+                echo;
+        env:
+        - name: DB_TYPE
+          value: 'postgresql'
+        - name: DB_HOST
+          value: 'artifactory-postgresql'
+        - name: DB_PORT
+          value: '5432'
+        - name: DB_USER
+          value: "artifactory"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-postgresql
+              key: postgresql-password
+        - name: EXTRA_JAVA_OPTIONS
+          value: >-
+            -Dartifactory.async.corePoolSize=8
+        - name: SERVER_XML_ARTIFACTORY_PORT
+          value: "8081"
+        ports:
+        - containerPort: 8081
+        volumeMounts:
+        - name: artifactory-volume
+          mountPath: "/var/opt/jfrog/artifactory"
+        - name: binarystore-xml
+          mountPath: "/artifactory_extra_conf/binarystore.xml"
+          subPath: binarystore.xml
+        - name: installer-info
+          mountPath: "/artifactory_extra_conf/info/installer-info.json"
+          subPath: installer-info.json
+        resources:
+          {}
+        readinessProbe:
+          httpGet:
+            path: /artifactory/webapp/#/login
+            port: 8040
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 10
+          successThreshold: 1
+        livenessProbe:
+          httpGet:
+            path: /artifactory/webapp/#/login
+            port: 8040
+          initialDelaySeconds: 90
+          periodSeconds: 10
+          timeoutSeconds: 10
+          failureThreshold: 10
+          successThreshold: 1
+      
+      volumes:
+      - name: binarystore-xml
+        secret:
+          secretName: artifactory-artifactory-binarystore
+      - name: installer-info
+        configMap:
+          name: artifactory-artifactory-installer-info
+  volumeClaimTemplates:
+  - metadata:
+      name: artifactory-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 20Gi
